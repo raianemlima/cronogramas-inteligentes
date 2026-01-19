@@ -1,25 +1,26 @@
-const totalSemanas = 54; // Conforme o Extensivo Inteligente [cite: 18-21]
-const semanasPendencia = [5, 10, 15, 23, 28, 33, 41, 46, 51]; // Datas de respiro [cite: 235, 283, 331, 394, 422, 450, 497, 525, 553]
+const totalSemanas = 54;
+const semanasPendencia = [5, 10, 15, 23, 28, 33, 41, 46, 51];
 
 const materiasBase = {
-    segunda: "Penal (Reforço + Metas + Questões)", [cite: 196]
-    terca: "Constitucional & Humanos", [cite: 196]
-    quarta: "Civil (Reforço + Metas + Questões)", [cite: 196]
-    quinta: "Proc. Civil & ECA", [cite: 196]
-    sexta: "Proc. Penal & Atualização Jurisprudencial", [cite: 196]
-    sabado: "Revisão Semanal & Reforço Humanos" [cite: 196]
+    segunda: "Penal (Reforço + Metas + Questões)",
+    terca: "Constitucional & Humanos",
+    quarta: "Civil (Reforço + Metas + Questões)",
+    quinta: "Proc. Civil & ECA",
+    sexta: "Proc. Penal & Atualização Jurisprudencial",
+    sabado: "Revisão Semanal & Reforço Humanos"
 };
 
 function gerarCronograma() {
     const container = document.getElementById('cronograma-container');
-    
+    if (!container) return;
+
     for (let i = 1; i <= totalSemanas; i++) {
         const isPendencia = semanasPendencia.includes(i);
         
         let html = `
             <div class="semana-card ${isPendencia ? 'pendencia' : ''}">
-                <h3 style="color: var(--verde-duo)">Semana ${i} ${isPendencia ? ' - ⚠️ SEMANA DE PENDÊNCIAS' : ''}</h3>
-                <p><i>${isPendencia ? 'Momento de revisar o caderno de erros e notas produzidas[cite: 47].' : 'Siga a lista de metas e o reforço de lei[cite: 73].'}</i></p>
+                <h3 style="color: #2ecc71">Semana ${i} ${isPendencia ? ' - ⚠️ SEMANA DE PENDÊNCIAS' : ''}</h3>
+                <p><i>${isPendencia ? 'Foco em revisão e caderno de erros.' : 'Siga a rotina multifocal.'}</i></p>
                 
                 <div class="meta-item">
                     <input type="checkbox" id="s${i}d1" onchange="salvar('s${i}d1', this.checked)">
@@ -51,7 +52,9 @@ function gerarCronograma() {
     carregarProgresso();
 }
 
-function salvar(id, status) { localStorage.setItem(id, status); }
+function salvar(id, status) {
+    localStorage.setItem(id, status);
+}
 
 function carregarProgresso() {
     const checks = document.querySelectorAll('input[type="checkbox"]');
@@ -61,4 +64,5 @@ function carregarProgresso() {
     });
 }
 
-gerarCronograma();
+// Inicia a geração
+document.addEventListener('DOMContentLoaded', gerarCronograma);
