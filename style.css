@@ -1,0 +1,14 @@
+:root {
+    --verde-duo: #2ecc71; /* Bloco Verde: Direito Civil, Penal, Const... */ [cite: 189]
+    --rosa-duo: #e91e63;  /* Bloco Rosa: ECA, Humanos, Difusos... */ [cite: 190]
+    --azul-duo: #3498db;  /* Bloco Azul: Periférica Prioritária... */ [cite: 191]
+    --cinza-duo: #95a5a6; /* Bloco Cinza: Empresarial e Tributário */ [cite: 192]
+    --bg: #f8f9fa;
+}
+
+body { font-family: sans-serif; background: var(--bg); padding: 20px; }
+.header { text-align: center; border-bottom: 3px solid var(--verde-duo); margin-bottom: 20px; }
+.semana-card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 20px; shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+.meta-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #eee; }
+.meta-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+.pendencia { border: 2px solid var(--rosa-duo); background: #fff5f7; } /* Destaque para Semana de Pendências */ [cite: 43]
