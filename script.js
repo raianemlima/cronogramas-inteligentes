@@ -1,10 +1,10 @@
 let currentMode = '8h1';
 let currentPart = 1;
-const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51]; // 
+const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51]; // [cite: 26-30]
 
 const content = {
     days: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
-    subjects: ["Penal", "Constitucional", "Civil", "Proc. Civil", "Proc. Penal", "D. Humanos / ECA"],
+    subjects: ["Penal", "Constitucional", "Civil", "Proc. Civil", "Proc. Penal", "Humanos / ECA"],
     modes: {
         '8h1': { label: '8h Opção 1', tasks: ['Lei (2h)', 'Metas (4h)', 'Questões (2h)'] },
         '8h2': { label: '8h Opção 2', tasks: ['Doutrina (5h)', 'Lei+Juris (2h)', 'Questões (1h)'] },
@@ -35,13 +35,13 @@ function render() {
     for (let i = start; i <= end; i++) {
         const isA = alerts.includes(i);
         let cardHtml = `
-            <div class="card-study ${isA ? 'alerta' : ''}">
+            <div class="card-study ${isA ? 'alerta-rev' : ''}">
                 <span class="week-id">W${i}</span>
-                <h4 style="margin:0">${isA ? 'Semanas de Pendências' : 'Sessão de Estudos'}</h4>
-                <p style="font-size:10px; opacity:0.6">${content.modes[currentMode].label}</p>`;
+                <h4 style="margin:0">${isA ? '⚠️ ALERTA REVISÃO' : 'SESSÃO DE ESTUDOS'}</h4>
+                <p style="font-size:10px; opacity:0.6; margin-top:5px">${content.modes[currentMode].label}</p>`;
 
         if (isA) {
-            cardHtml += `<div class="day-box"><p style="font-size:12px; color:var(--pink-neon)">Foco total em revisar o caderno de erros e metas atrasadas do bloco anterior.</p></div>`;
+            cardHtml += `<div class="day-box"><p style="font-size:12px; color:var(--pink-neon)">PARE TUDO: Revise o caderno de erros e as metas do bloco anterior antes de seguir [cite: 26-30].</p></div>`;
         } else {
             content.days.forEach((day, idx) => {
                 cardHtml += `
@@ -52,7 +52,7 @@ function render() {
                             return `
                                 <div class="item">
                                     <input type="checkbox" id="${id}" onchange="save()">
-                                    <span class="box ${task.includes('Lei') ? 'green' : task.includes('Metas') || task.includes('Doutrina') ? 'pink' : 'gray'}"></span>
+                                    <span class="box ${task.includes('Lei') ? 'green' : (task.includes('Metas') || task.includes('Doutrina') ? 'pink' : 'gray')}"></span>
                                     <label for="${id}">${task}</label>
                                 </div>`;
                         }).join('')}
@@ -74,18 +74,18 @@ function load() {
     document.querySelectorAll('input[type="checkbox"]').forEach(c => {
         c.checked = localStorage.getItem(c.id) === 'true';
     });
-    document.getElementById('global-notes').value = localStorage.getItem('duo-notes') || '';
+    document.getElementById('global-notes').value = localStorage.getItem('duo-notes-global') || '';
     updateProgress();
 }
 
-function saveNotes() { localStorage.setItem('duo-notes', document.getElementById('global-notes').value); }
+function saveNotes() { localStorage.setItem('duo-notes-global', document.getElementById('global-notes').value); }
 
 function updateProgress() {
     const checks = document.querySelectorAll('input[type="checkbox"]');
     const done = Array.from(checks).filter(c => c.checked).length;
     const perc = Math.round((done / checks.length) * 100) || 0;
     document.getElementById('main-bar').style.width = perc + '%';
-    document.getElementById('perc-label').innerText = `SISTEMA ${perc}% SINCRONIZADO`;
+    document.getElementById('perc-label').innerText = `CRONOGRAMA ${perc}% SINCRONIZADO`;
 }
 
-render();
+document.addEventListener('DOMContentLoaded', () => render());
