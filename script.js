@@ -1,16 +1,17 @@
 let currentMode = '8h1';
 let currentPart = 1;
-const totalSemanas = 54;
-const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51];
+const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51]; // [cite: 26-30]
 
 const config = {
     days: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
-    // Mapeamento do Reforço da Lei baseado nos PDFs
+    // Mapeamento das disciplinas por carga horária
     lawSubjects: {
-        '8h1': ["Penal", "Const.", "Civil", "P. Civil", "P. Penal", "ECA"],
-        '4h': ["P. Penal", "Const.", "Civil", "P. Civil", "Penal", "Humanos"],
-        '6h1': ["Penal", "Const.", "Civil", "P. Civil", "P. Penal", "ECA"],
-        'default': ["Penal", "Const.", "Civil", "P. Civil", "P. Penal", "Duo"]
+        '8h1': ["Penal", "Const.", "Civil", "P.Civil", "P.Penal", "ECA"],
+        '8h2': ["Penal", "Const.", "Civil", "P.Civil", "P.Penal", "Revisão"],
+        '6h1': ["Penal", "Const.", "Civil", "P.Civil", "P.Penal", "ECA"],
+        '6h2': ["Penal", "Const.", "Civil", "P.Civil", "P.Penal", "Revisão"],
+        '4h': ["P.Penal", "Const.", "Civil", "P.Civil", "Penal", "Humanos"],
+        '3h': ["Metas", "Metas", "Metas", "Metas", "Metas", "Revisão"]
     },
     modes: {
         '8h1': { label: '8h Opção 1', tasks: ['Reforço Lei (3h)', 'Lista Metas (2.5h)', 'Questões (1.5h)'] },
@@ -36,13 +37,13 @@ function switchPart(p) {
 function render() {
     const grid = document.getElementById('content-grid');
     grid.innerHTML = '';
-    const start = (currentPart - 1) * 18 + 1;
+    const start = (currentPart - 1) * 18 + 1; // 
     const end = currentPart * 18;
 
     for (let i = start; i <= end; i++) {
         const isA = alerts.includes(i);
         const mode = config.modes[currentMode];
-        const lawList = config.lawSubjects[currentMode] || config.lawSubjects['default'];
+        const lawList = config.lawSubjects[currentMode];
         
         let cardHtml = `
             <div class="card-study ${isA ? 'alerta-rev' : ''}">
@@ -64,13 +65,15 @@ function render() {
                     
                     if (isLaw) {
                         cardHtml += `
-                            <div class="lei-section">
-                                <span class="lei-tag">REFORÇO DA LEI</span>
-                                <div class="item">
-                                    <input type="checkbox" id="${id}" onchange="save()">
-                                    <label for="${id}"><b>${lawSubject}:</b> ${task.split(' ')[2]}</label>
+                            <details>
+                                <summary>REFORÇO DA LEI: ${lawSubject}</summary>
+                                <div class="details-content">
+                                    <div class="item">
+                                        <input type="checkbox" id="${id}" onchange="save()">
+                                        <label for="${id}">Concluir leitura de <b>${lawSubject}</b> (${task.split('(')[1]})</label>
+                                    </div>
                                 </div>
-                            </div>`;
+                            </details>`;
                     } else {
                         cardHtml += `
                             <div class="item">
