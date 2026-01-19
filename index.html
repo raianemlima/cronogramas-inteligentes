@@ -4,16 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Cronograma Duo - Raiane</title>
+    <title>DUO TECH - Estudo Avançado</title>
 </head>
 <body>
-    <div class="header">
-        <h1>CURSOS DUO</h1>
-        <p>Extensivo Inteligente - 54 Semanas</p>
-        <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
-        <small id="status-txt">0% concluído</small>
+    <header class="dashboard-header">
+        <div style="text-align:center">
+            <span style="letter-spacing: 4px; font-weight: 800; color: var(--verde-tech)">CURSOS DUO</span>
+            <div class="progress-orbit"><div class="progress-glow" id="fill"></div></div>
+            <small id="status" style="font-family: monospace; color: var(--azul-tech)">0% SYNCED</small>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="nav-tech">
+            <button class="btn-part active" onclick="mudarParte(1)">PARTE 01</button>
+            <button class="btn-part" onclick="mudarParte(2)">PARTE 02</button>
+            <button class="btn-part" onclick="mudarParte(3)">PARTE 03</button>
+        </nav>
+        <div id="app-container" class="semana-grid"></div>
     </div>
-    <div id="cronograma-container" style="margin-top: 30px;"></div>
+
     <script src="script.js"></script>
 </body>
 </html>
