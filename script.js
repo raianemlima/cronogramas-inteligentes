@@ -1,9 +1,8 @@
 const ACCESS_KEY = "DUO2026";
 let currentMode = '8h1';
 let currentPart = 1;
-const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51]; //
+const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51];
 
-// Banco de Dados do Reforço da Lei
 const lawDatabase = {
     "Penal": ["Lei de Drogas", "Estatuto do Desarmamento", "Lei de Crimes Hediondos", "Lei de Crimes Ambientais", "Crimes no ECA", "Lei da Tortura", "Lei de Abuso de Autoridade", "Crimes de Trânsito", "Lei do Preconceito Racial", "Código Penal"],
     "Constitucional": ["Mandado de Segurança", "Mandado de Injunção", "Súmula Vinculante", "Habeas Data", "Lei da ADI", "Lei da ADPF", "Constituição Federal", "Estatuto do Idoso", "CDC"],
@@ -14,7 +13,6 @@ const lawDatabase = {
     "Humanos": ["Declaração Universal", "Pacto de San José", "Protocolo de San Salvador", "Convenção CEDAW", "Convenção Belém do Pará"]
 };
 
-// Configuração com tempos extraídos dos arquivos
 const config = {
     days: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
     modes: {
@@ -28,17 +26,17 @@ const config = {
 };
 
 function checkAccess() {
-    if (localStorage.getItem('access_granted') === 'true') {
+    if (sessionStorage.getItem('access_granted') === 'true') {
         document.getElementById('app-body').style.display = 'block';
         render();
     } else {
-        let input = prompt("Digite a chave de acesso DUO:");
+        let input = prompt("Bem-vindo ao Cronograma Inteligente! Digite a chave de acesso para entrar:");
         if (input === ACCESS_KEY) {
-            localStorage.setItem('access_granted', 'true');
+            sessionStorage.setItem('access_granted', 'true');
             document.getElementById('app-body').style.display = 'block';
             render();
         } else {
-            alert("Acesso negado.");
+            alert("Chave incorreta. Acesso negado.");
             window.location.reload();
         }
     }
@@ -50,13 +48,13 @@ function changeSchedule() { currentMode = document.getElementById('mode-select')
 function render() {
     const grid = document.getElementById('content-grid');
     grid.innerHTML = '';
-    const start = (currentPart - 1) * 18 + 1; //
+    const start = (currentPart - 1) * 18 + 1;
     const end = currentPart * 18;
 
     for (let i = start; i <= end; i++) {
         const isA = alerts.includes(i);
         const mode = config.modes[currentMode];
-        let cardHtml = `<div class="card-study ${isA ? 'alerta-rev' : ''}"><span class="week-id">SEMANA ${i}</span><h4>${isA ? 'ALERTA REVISÃO' : 'METAS DIÁRIAS'}</h4>`;
+        let cardHtml = `<div class="card-study ${isA ? 'alerta-rev' : ''}"><span class="week-id">SEMANA ${i}</span><h4>${isA ? '⚠️ ALERTA REVISÃO' : 'METAS DIÁRIAS'}</h4>`;
         
         if (isA) {
             cardHtml += `<div class="day-box"><p style="font-size:13px; color:#FF1744; font-weight:600">PARE TUDO: Revise o caderno de erros e as metas do bloco anterior antes de seguir.</p></div>`;
@@ -67,7 +65,7 @@ function render() {
                 mode.tasks.forEach((task, tIdx) => {
                     const baseId = `${currentMode}-w${i}-d${idx}-${task.n}`;
                     if (task.n === 'Reforço Lei' && lawDatabase[subj]) {
-                        cardHtml += `<details><summary>REFORÇO LEI: ${subj} <span class="time-tag">(${task.t})</span></summary><div class="lei-checklist">${lawDatabase[subj].map((l, lIdx) => { const sId = `${baseId}-l${lIdx}`; return `<div class="lei-item"><input type="checkbox" id="${sId}" onchange="save()" ${localStorage.getItem(sId) === 'true' ? 'checked' : ''}><label for="${sId}">${l}</label></div>`; }).join('')}</div></details>`;
+                        cardHtml += `<details><summary>REFORÇO DA LEI: ${subj} <span class="time-tag">(${task.t})</span></summary><div class="lei-checklist">${lawDatabase[subj].map((l, lIdx) => { const sId = `${baseId}-l${lIdx}`; return `<div class="lei-item"><input type="checkbox" id="${sId}" onchange="save()" ${localStorage.getItem(sId) === 'true' ? 'checked' : ''}><label for="${sId}">${l}</label></div>`; }).join('')}</div></details>`;
                     } else {
                         const color = task.n.includes('Metas') ? 'pink' : (task.n.includes('Quest') ? 'gray' : 'blue');
                         cardHtml += `<div class="item"><input type="checkbox" id="${baseId}" onchange="save()" ${localStorage.getItem(baseId) === 'true' ? 'checked' : ''}><span class="box ${color}"></span><label for="${baseId}">${task.n}: ${subj}</label><span class="time-tag">(${task.t})</span></div>`;
@@ -84,7 +82,11 @@ function render() {
 function save() { document.querySelectorAll('input[type="checkbox"]').forEach(c => localStorage.setItem(c.id, c.checked)); updateProgress(); }
 function updateProgress() { const checks = document.querySelectorAll('input[type="checkbox"]'); const done = Array.from(checks).filter(c => c.checked).length; const perc = Math.round((done / (checks.length || 1)) * 100); document.getElementById('main-bar').style.width = perc + '%'; document.getElementById('perc-label').innerText = `${perc}% CONCLUÍDO`; }
 function saveNotes() { localStorage.setItem('duo-notes', document.getElementById('global-notes').value); }
-function exportProgress() { const data = JSON.stringify(localStorage); const blob = new Blob([data], { type: "application/json" }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `progresso-duo.json`; a.click(); }
+function exportProgress() { const data = JSON.stringify(localStorage); const blob = new Blob([data], { type: "application/json" }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `meu-progresso.json`; a.click(); }
 function importProgress(input) { const r = new FileReader(); r.onload = () => { const d = JSON.parse(r.result); Object.keys(d).forEach(k => localStorage.setItem(k, d[k])); location.reload(); }; r.readAsText(input.files[0]); }
-function clearAll() { if(confirm("Deseja apagar tudo?")) { localStorage.clear(); location.reload(); } }
-document.addEventListener('DOMContentLoaded', () => { document.getElementById('global-notes').value = localStorage.getItem('duo-notes') || ''; checkAccess(); });
+function clearAll() { if(confirm("Deseja apagar o progresso local?")) { localStorage.clear(); location.reload(); } }
+
+document.addEventListener('DOMContentLoaded', () => { 
+    document.getElementById('global-notes').value = localStorage.getItem('duo-notes') || ''; 
+    checkAccess(); 
+});
