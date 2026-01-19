@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>DUO TECH - Estudo Avançado</title>
+    <title>DUO TECH - Painel Raiane</title>
 </head>
 <body>
-    <header class="dashboard-header">
-        <div style="text-align:center">
-            <span style="letter-spacing: 4px; font-weight: 800; color: var(--verde-tech)">CURSOS DUO</span>
-            <div class="progress-orbit"><div class="progress-glow" id="fill"></div></div>
-            <small id="status" style="font-family: monospace; color: var(--azul-tech)">0% SYNCED</small>
+    <header class="glass-header">
+        <div class="header-content">
+            <span class="logo-text">CURSOS DUO <span class="edition">EXTENSIVO INTELIGENTE</span></span>
+            <div class="main-progress">
+                <div class="progress-track"><div id="main-bar" class="progress-fill"></div></div>
+                <span id="perc-txt">0% SYNCED</span>
+            </div>
         </div>
+        <nav class="parts-nav">
+            <button class="tab-btn active" onclick="switchPart(1)">PARTE 01</button>
+            <button class="tab-btn" onclick="switchPart(2)">PARTE 02</button>
+            <button class="tab-btn" onclick="switchPart(3)">PARTE 03</button>
+        </nav>
     </header>
 
-    <div class="container">
-        <nav class="nav-tech">
-            <button class="btn-part active" onclick="mudarParte(1)">PARTE 01</button>
-            <button class="btn-part" onclick="mudarParte(2)">PARTE 02</button>
-            <button class="btn-part" onclick="mudarParte(3)">PARTE 03</button>
-        </nav>
-        <div id="app-container" class="semana-grid"></div>
-    </div>
+    <main id="schedule-grid" class="grid-container"></main>
 
     <script src="script.js"></script>
 </body>

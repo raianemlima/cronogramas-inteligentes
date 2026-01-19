@@ -1,65 +1,74 @@
-let parteAtual = 1;
-const semanasPendencia = [5, 10, 15, 23, 28, 33, 41, 46, 51]; [cite: 1753-1756]
+let currentPart = 1;
+const totalSemanas = 54; // [cite: 1731]
+const pendenciaWeeks = [5, 10, 15, 23, 28, 33, 41, 46, 51]; // [cite: 1753]
 
-function mudarParte(p) {
-    parteAtual = p;
-    document.querySelectorAll('.btn-part').forEach((b, i) => {
-        b.classList.toggle('active', i + 1 === p);
-    });
-    renderizar();
+function switchPart(p) {
+    currentPart = p;
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === p));
+    render();
 }
 
-function renderizar() {
-    const container = document.getElementById('app-container');
-    container.innerHTML = '';
+function render() {
+    const grid = document.getElementById('schedule-grid');
+    grid.innerHTML = '';
     
-    // Define o intervalo de semanas baseado na Parte 
-    const inicio = (parteAtual - 1) * 18 + 1;
-    const fim = parteAtual * 18;
+    // Calcula intervalo da parte [cite: 1729-1731]
+    const start = (currentPart - 1) * 18 + 1;
+    const end = currentPart * 18;
 
-    for (let i = inicio; i <= fim; i++) {
-        const isPendencia = semanasPendencia.includes(i);
-        container.innerHTML += `
-            <div class="card-tech ${isPendencia ? 'bloco-rosa' : 'bloco-verde'}">
-                <div style="display:flex; justify-content:space-between">
-                    <span style="font-size: 12px; color: var(--azul-tech)">WEEKLY MISSION</span>
-                    <span style="font-weight:800">#${i}</span>
-                </div>
-                <h3 style="margin: 10px 0">${isPendencia ? 'REVISÃO DE PENDÊNCIAS' : 'CRONOGRAMA ATIVO'}</h3>
-                
-                ${gerarMeta(i, "Lei", "Reforço de Letra da Lei", "verde")}
-                ${gerarMeta(i, "Meta", "Lista de Metas (Doutrina)", "verde")}
-                ${gerarMeta(i, "Quest", "Questões (Filtro DPE)", "azul")}
-                ${isPendencia ? '<p style="color:var(--rosa-tech); font-size:11px">! Alerta Revisão: Caderno de Erros [cite: 1757]</p>' : ''}
+    for (let i = start; i <= end; i++) {
+        const isPendencia = pendenciaWeeks.includes(i);
+        const card = document.createElement('div');
+        card.className = `card ${isPendencia ? 'pendencia-card' : ''}`;
+        
+        card.innerHTML = `
+            <div class="card-h">
+                <span class="week-badge">S${i}</span>
+                <span style="font-size:10px; color:var(--v-glow)">${isPendencia ? 'SYSTEM RECOVERY' : 'ACTIVE SESSION'}</span>
             </div>
+            <h4 style="margin:0 0 15px 0">${isPendencia ? 'SEMANA DE PENDÊNCIAS' : 'CRONOGRAMA DE METAS'}</h4>
+            
+            ${item(i, 'Lei', 'Reforço de Lei [cite: 1781]', 'verde')}
+            ${item(i, 'Meta', 'Lista de Metas [cite: 1868]', 'verde')}
+            ${item(i, 'Quest', 'Questões Diárias [cite: 1871]', 'azul')}
+            ${isPendencia ? '<div style="font-size:11px; color:var(--r-glow); margin-top:10px">► Alerta Revisão: Caderno de Erros [cite: 1757]</div>' : ''}
         `;
+        grid.appendChild(card);
     }
-    carregar();
+    load();
 }
 
-function gerarMeta(sem, tipo, texto, bloco) {
-    const id = `s${sem}${tipo}`;
+function item(sem, tipo, texto, bloco) {
+    const id = `w${sem}${tipo}`;
     return `
-        <div class="meta-row bloco-${bloco}">
-            <input type="checkbox" id="${id}" onchange="atualizar('${id}', this.checked)">
-            <label for="${id}" style="font-size:13px">${texto}</label>
+        <div class="meta-item border-${bloco}">
+            <input type="checkbox" id="${id}" onchange="save('${id}', this.checked)">
+            <label for="${id}" style="font-size:13px; cursor:pointer">${texto}</label>
         </div>
     `;
 }
 
-function atualizar(id, status) {
-    localStorage.setItem(id, status);
-    const checks = document.querySelectorAll('input[type="checkbox"]');
-    const marcados = Array.from(checks).filter(c => c.checked).length;
-    const porc = Math.round((marcados / checks.length) * 100);
-    document.getElementById('fill').style.width = porc + '%';
-    document.getElementById('status').innerText = `${porc}% SYNCED`;
+function save(id, state) {
+    localStorage.setItem(id, state);
+    updateProgress();
 }
 
-function carregar() {
+function updateProgress() {
+    const all = document.querySelectorAll('input[type="checkbox"]');
+    const checked = Array.from(all).filter(c => localStorage.getItem(c.id) === 'true').length;
+    // O progresso é baseado no total de 54 semanas para ser real
+    const totalChecks = totalSemanas * 3; 
+    const porc = Math.round((checked / totalChecks) * 100) || 0;
+    
+    document.getElementById('main-bar').style.width = porc + '%';
+    document.getElementById('perc-txt').innerText = `${porc}% SYNCED`;
+}
+
+function load() {
     document.querySelectorAll('input[type="checkbox"]').forEach(c => {
         c.checked = localStorage.getItem(c.id) === 'true';
     });
+    updateProgress();
 }
 
-document.addEventListener('DOMContentLoaded', () => mudarParte(1));
+document.addEventListener('DOMContentLoaded', () => switchPart(1));
