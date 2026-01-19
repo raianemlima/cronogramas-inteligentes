@@ -3,6 +3,7 @@ let currentMode = '8h1';
 let currentPart = 1;
 const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51];
 
+// Banco de Dados do Reforço da Lei
 const lawDatabase = {
     "Penal": ["Lei de Drogas", "Estatuto do Desarmamento", "Lei de Crimes Hediondos", "Lei de Crimes Ambientais", "Crimes no ECA", "Lei da Tortura", "Lei de Abuso de Autoridade", "Crimes de Trânsito", "Lei do Preconceito Racial", "Código Penal"],
     "Constitucional": ["Mandado de Segurança", "Mandado de Injunção", "Súmula Vinculante", "Habeas Data", "Lei da ADI", "Lei da ADPF", "Constituição Federal", "Estatuto do Idoso", "CDC"],
@@ -13,6 +14,7 @@ const lawDatabase = {
     "Humanos": ["Declaração Universal", "Pacto de San José", "Protocolo de San Salvador", "Convenção CEDAW", "Convenção Belém do Pará"]
 };
 
+// Configuração com tempos
 const config = {
     days: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
     modes: {
@@ -26,19 +28,15 @@ const config = {
 };
 
 function checkAccess() {
-    if (sessionStorage.getItem('access_granted') === 'true') {
+    // Pedir senha SEMPRE que a página carregar ou atualizar
+    let input = prompt("Bem-vindo ao Cronograma Inteligente! Digite a chave de acesso:");
+    
+    if (input === ACCESS_KEY) {
         document.getElementById('app-body').style.display = 'block';
         render();
     } else {
-        let input = prompt("Bem-vindo ao Cronograma Inteligente! Digite a chave de acesso para entrar:");
-        if (input === ACCESS_KEY) {
-            sessionStorage.setItem('access_granted', 'true');
-            document.getElementById('app-body').style.display = 'block';
-            render();
-        } else {
-            alert("Chave incorreta. Acesso negado.");
-            window.location.reload();
-        }
+        alert("Chave incorreta. Acesso negado.");
+        window.location.reload();
     }
 }
 
@@ -82,9 +80,9 @@ function render() {
 function save() { document.querySelectorAll('input[type="checkbox"]').forEach(c => localStorage.setItem(c.id, c.checked)); updateProgress(); }
 function updateProgress() { const checks = document.querySelectorAll('input[type="checkbox"]'); const done = Array.from(checks).filter(c => c.checked).length; const perc = Math.round((done / (checks.length || 1)) * 100); document.getElementById('main-bar').style.width = perc + '%'; document.getElementById('perc-label').innerText = `${perc}% CONCLUÍDO`; }
 function saveNotes() { localStorage.setItem('duo-notes', document.getElementById('global-notes').value); }
-function exportProgress() { const data = JSON.stringify(localStorage); const blob = new Blob([data], { type: "application/json" }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `meu-progresso.json`; a.click(); }
-function importProgress(input) { const r = new FileReader(); r.onload = () => { const d = JSON.parse(r.result); Object.keys(d).forEach(k => localStorage.setItem(k, d[k])); location.reload(); }; r.readAsText(input.files[0]); }
-function clearAll() { if(confirm("Deseja apagar o progresso local?")) { localStorage.clear(); location.reload(); } }
+function exportProgress() { const data = JSON.stringify(localStorage); const blob = new Blob([data], { type: "application/json" }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `backup-duo.json`; a.click(); }
+function importProgress(input) { const reader = new FileReader(); reader.onload = () => { const d = JSON.parse(reader.result); Object.keys(d).forEach(k => localStorage.setItem(k, d[k])); location.reload(); }; reader.readAsText(input.files[0]); }
+function clearAll() { if(confirm("Deseja apagar tudo?")) { localStorage.clear(); location.reload(); } }
 
 document.addEventListener('DOMContentLoaded', () => { 
     document.getElementById('global-notes').value = localStorage.getItem('duo-notes') || ''; 
