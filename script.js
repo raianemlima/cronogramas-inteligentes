@@ -13,15 +13,63 @@ const lawDatabase = {
     "Humanos": ["Declaração Universal", "Pacto de San José", "Convenção Americana", "Protocolo de San Salvador", "Convenção CEDAW", "Convenção Belém do Pará"]
 };
 
+// Configuração com tempos extraídos dos arquivos
 const config = {
     days: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
     modes: {
-        '8h1': { label: '8h Opção 1', lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "ECA"], tasks: ['Reforço Lei', 'Lista Metas', 'Questões'] },
-        '8h2': { label: '8h Opção 2', lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "Humanos"], tasks: ['Reforço Lei', 'Lista Metas', 'Questões'] },
-        '6h1': { label: '6h Opção 1', lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "ECA"], tasks: ['Reforço Lei', 'Lista Metas', 'Questões'] },
-        '6h2': { label: '6h Opção 2', lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "Humanos"], tasks: ['Reforço Lei', 'Lista Metas', 'Questões'] },
-        '4h': { label: '4h Padrão', lawSubj: ["Processo Penal", "Constitucional", "Civil", "Processo Civil", "Penal", "Humanos"], tasks: ['Reforço Lei', 'Lista Metas', 'Questões'] },
-        '3h': { label: '3h Padrão', lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "ECA"], tasks: ['Lista Metas', 'Questões'] }
+        '8h1': { 
+            label: '8h Opção 1', 
+            lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "ECA"], 
+            tasks: [
+                { name: 'Reforço Lei', time: '3h' }, 
+                { name: 'Lista Metas', time: '2h30min' }, 
+                { name: 'Questões', time: '1h30min' }
+            ] 
+        },
+        '8h2': { 
+            label: '8h Opção 2', 
+            lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "Humanos"], 
+            tasks: [
+                { name: 'Reforço Lei', time: '3h' }, 
+                { name: 'Lista Metas', time: '2h30min' }, 
+                { name: 'Questões', time: '1h30min' }
+            ] 
+        },
+        '6h1': { 
+            label: '6h Opção 1', 
+            lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "ECA"], 
+            tasks: [
+                { name: 'Reforço Lei', time: '50min' }, 
+                { name: 'Lista Metas', time: '2h30min' }, 
+                { name: 'Questões', time: '40min' }
+            ] 
+        },
+        '6h2': { 
+            label: '6h Opção 2', 
+            lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "Humanos"], 
+            tasks: [
+                { name: 'Reforço Lei', time: '40min' }, 
+                { name: 'Lista Metas', time: '2h30min' }, 
+                { name: 'Questões', time: '1h' }
+            ] 
+        },
+        '4h': { 
+            label: '4h Padrão', 
+            lawSubj: ["Processo Penal", "Constitucional", "Civil", "Processo Civil", "Penal", "Humanos"], 
+            tasks: [
+                { name: 'Reforço Lei', time: '30min' }, 
+                { name: 'Lista Metas', time: '1h30min' }, 
+                { name: 'Questões', time: '1h30min' }
+            ] 
+        },
+        '3h': { 
+            label: '3h Padrão', 
+            lawSubj: ["Penal", "Constitucional", "Civil", "Processo Civil", "Processo Penal", "ECA"], 
+            tasks: [
+                { name: 'Lista Metas', time: '1h30min' }, 
+                { name: 'Questões', time: '1h30min' }
+            ] 
+        }
     }
 };
 
@@ -37,7 +85,7 @@ function render() {
     for (let i = start; i <= end; i++) {
         const isA = alerts.includes(i);
         const mode = config.modes[currentMode];
-        let cardHtml = `<div class="card-study ${isA ? 'alerta-rev' : ''}"><span class="week-id">SEMANA ${i}</span><h4>${isA ? 'ALERTA REVISÃO' : 'METAS DIÁRIAS'}</h4>`;
+        let cardHtml = `<div class="card-study ${isA ? 'alerta-rev' : ''}"><span class="week-id">SEMANA ${i}</span><h4>${isA ? '⚠️ ALERTA REVISÃO' : 'METAS DIÁRIAS'}</h4>`;
         
         if (isA) {
             cardHtml += `<div class="day-box"><p style="font-size:13px; color:#FF1744; font-weight:600">PARE TUDO: Revise o caderno de erros e as metas do bloco anterior antes de seguir.</p></div>`;
@@ -45,12 +93,15 @@ function render() {
             config.days.forEach((day, idx) => {
                 const subj = mode.lawSubj[idx];
                 cardHtml += `<div class="day-box"><span class="day-title">${day}</span>`;
-                mode.tasks.forEach(task => {
-                    const baseId = `${currentMode}-w${i}-d${idx}-${task}`;
-                    if (task === 'Reforço Lei' && lawDatabase[subj]) {
+                mode.tasks.forEach((task, tIdx) => {
+                    const baseId = `${currentMode}-w${i}-d${idx}-${task.name}`;
+                    if (task.name === 'Reforço Lei' && lawDatabase[subj]) {
                         cardHtml += `
                             <details>
-                                <summary>REFORÇO DA LEI: ${subj}</summary>
+                                <summary>
+                                    REFORÇO DA LEI: ${subj} 
+                                    <span class="time-tag">(${task.time})</span>
+                                </summary>
                                 <div class="lei-checklist">
                                     ${lawDatabase[subj].map((law, lIdx) => {
                                         const subId = `${baseId}-l${lIdx}`;
@@ -63,12 +114,13 @@ function render() {
                                 </div>
                             </details>`;
                     } else {
-                        const color = task === 'Lista Metas' ? 'pink' : 'gray';
+                        const color = task.name === 'Lista Metas' ? 'pink' : 'gray';
                         cardHtml += `
                             <div class="item">
                                 <input type="checkbox" id="${baseId}" onchange="save()" ${localStorage.getItem(baseId) === 'true' ? 'checked' : ''}>
                                 <span class="box ${color}"></span>
-                                <label for="${baseId}">${task}: ${subj}</label>
+                                <label for="${baseId}">${task.name}: ${subj}</label>
+                                <span class="time-tag">(${task.time})</span>
                             </div>`;
                     }
                 });

@@ -44,6 +44,8 @@ details[open] summary::before { transform: rotate(90deg); }
 .lei-checklist { margin-top: 10px; padding: 10px; border-top: 1px solid rgba(0,200,83,0.1); }
 .lei-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; color: #444; }
 
+.time-tag { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-left: auto; }
+
 .item { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 13px; }
 .box { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .green { background: var(--duo-green); } .pink { background: var(--duo-pink); } .gray { background: var(--duo-gray); }
