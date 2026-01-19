@@ -16,8 +16,8 @@
             <div class="mode-selector">
                 <label>CARGA HORÁRIA:</label>
                 <select id="mode-select" onchange="changeSchedule()">
-                    <option value="8h1">8h - Opção 1 (Diário)</option>
-                    <option value="8h2">8h - Opção 2 (Blocos)</option>
+                    <option value="8h1">8h - Opção 1</option>
+                    <option value="8h2">8h - Opção 2</option>
                     <option value="6h1">6h - Opção 1</option>
                     <option value="6h2">6h - Opção 2</option>
                     <option value="4h">4h - Padrão</option>
@@ -50,9 +50,71 @@
             <textarea id="global-notes" placeholder="Parei na Meta X de ECA..." oninput="saveNotes()"></textarea>
             
             <div class="legend">
-                <div class="leg"><span class="box green"></span> Letra da Lei</div>
-                <div class="leg"><span class="box pink"></span> Doutrina</div>
-                <div class="leg"><span class="box blue"></span> Jurisprudência</div>
+                <div class="leg"><span class="box green"></span> Reforço da Lei</div>
+                <div class="leg"><span class="box pink"></span> Lista de Metas</div>
+                <div class="leg"><span class="box blue"></span> Juris/Aprofundamento</div>
+                <div class="leg"><span class="box gray"></span> Questões</div>
+            </div>
+            <button class="reset-link" onclick="clearAll()">Resetar progresso local</button>
+        </aside>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Cursos DUO | Cronograma Inteligente</title>
+</head>
+<body>
+    <header class="clean-header">
+        <div class="top-bar">
+            <div class="logo-area">
+                <h1 class="brand-logo">CURSOS <span class="green-brand">DUO</span></h1>
+                <span class="page-title">| CRONOGRAMA INTELIGENTE</span>
+            </div>
+            <div class="mode-selector">
+                <label>CARGA HORÁRIA:</label>
+                <select id="mode-select" onchange="changeSchedule()">
+                    <option value="8h1">8h - Opção 1</option>
+                    <option value="8h2">8h - Opção 2</option>
+                    <option value="6h1">6h - Opção 1</option>
+                    <option value="6h2">6h - Opção 2</option>
+                    <option value="4h">4h - Padrão</option>
+                    <option value="3h">3h - Padrão</option>
+                </select>
+            </div>
+        </div>
+        <div class="progress-section">
+            <div class="track"><div id="main-bar" class="fill"></div></div>
+            <div id="perc-label">0% CONCLUÍDO</div>
+        </div>
+        <nav class="parts-nav">
+            <button class="part-btn active" onclick="switchPart(1)">PARTE 01</button>
+            <button class="part-btn" onclick="switchPart(2)">PARTE 02</button>
+            <button class="part-btn" onclick="switchPart(3)">PARTE 03</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section id="content-grid" class="cards-grid"></section>
+        
+        <aside class="notes-sidebar">
+            <div class="backup-area">
+                <button class="btn-action" onclick="exportProgress()">📤 EXPORTAR BACKUP</button>
+                <input type="file" id="import-file" style="display:none" onchange="importProgress(this)">
+                <button class="btn-action" onclick="document.getElementById('import-file').click()">📥 IMPORTAR BACKUP</button>
+            </div>
+            
+            <h4>ANOTAÇÕES</h4>
+            <textarea id="global-notes" placeholder="Parei na Meta X de ECA..." oninput="saveNotes()"></textarea>
+            
+            <div class="legend">
+                <div class="leg"><span class="box green"></span> Reforço da Lei</div>
+                <div class="leg"><span class="box pink"></span> Lista de Metas</div>
+                <div class="leg"><span class="box blue"></span> Juris/Aprofundamento</div>
                 <div class="leg"><span class="box gray"></span> Questões</div>
             </div>
             <button class="reset-link" onclick="clearAll()">Resetar progresso local</button>

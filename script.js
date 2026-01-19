@@ -1,18 +1,24 @@
 let currentMode = '8h1';
 let currentPart = 1;
-const totalSemanas = 54; // [cite: 1, 18-21]
-const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51]; // [cite: 26-30]
+const totalSemanas = 54;
+const alerts = [5, 10, 15, 23, 28, 33, 41, 46, 51];
 
-const content = {
+const config = {
     days: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
-    subjects: ["Penal", "Constitucional", "Civil/Emp.", "Proc. Civil", "Proc. Penal", "Humanos/ECA"],
+    // Mapeamento do Reforço da Lei baseado nos PDFs
+    lawSubjects: {
+        '8h1': ["Penal", "Const.", "Civil", "P. Civil", "P. Penal", "ECA"],
+        '4h': ["P. Penal", "Const.", "Civil", "P. Civil", "Penal", "Humanos"],
+        '6h1': ["Penal", "Const.", "Civil", "P. Civil", "P. Penal", "ECA"],
+        'default': ["Penal", "Const.", "Civil", "P. Civil", "P. Penal", "Duo"]
+    },
     modes: {
-        '8h1': { label: '8h Opção 1', tasks: ['Lei (2h)', 'Metas (4h)', 'Questões (2h)'] },
+        '8h1': { label: '8h Opção 1', tasks: ['Reforço Lei (3h)', 'Lista Metas (2.5h)', 'Questões (1.5h)'] },
         '8h2': { label: '8h Opção 2', tasks: ['Doutrina (5h)', 'Lei+Juris (2h)', 'Questões (1h)'] },
-        '6h1': { label: '6h Opção 1', tasks: ['Lei (1.5h)', 'Metas (3h)', 'Questões (1.5h)'] },
-        '6h2': { label: '6h Opção 2', tasks: ['Metas (4h)', 'Questões (2h)'] },
-        '4h': { label: '4h Padrão', tasks: ['Lei (1h)', 'Metas (2h)', 'Questões (1h)'] },
-        '3h': { label: '3h Padrão', tasks: ['Metas (1.5h)', 'Questões (1.5h)'] }
+        '6h1': { label: '6h Opção 1', tasks: ['Reforço Lei (50min)', 'Lista Metas (2.5h)', 'Questões (1.5h)'] },
+        '6h2': { label: '6h Opção 2', tasks: ['Reforço Lei (40min)', 'Lista Metas (2.5h)', 'Questões (2h)'] },
+        '4h': { label: '4h Padrão', tasks: ['Reforço Lei (30min)', 'Lista Metas (1.5h)', 'Questões (1.5h)'] },
+        '3h': { label: '3h Padrão', tasks: ['Lista Metas (1.5h)', 'Questões (1.5h)'] }
     }
 };
 
@@ -35,28 +41,44 @@ function render() {
 
     for (let i = start; i <= end; i++) {
         const isA = alerts.includes(i);
-        const mode = content.modes[currentMode];
+        const mode = config.modes[currentMode];
+        const lawList = config.lawSubjects[currentMode] || config.lawSubjects['default'];
         
         let cardHtml = `
             <div class="card-study ${isA ? 'alerta-rev' : ''}">
                 <span class="week-id">SEMANA ${i}</span>
-                <h4>${isA ? 'ALERTA REVISÃO' : 'METAS SEMANAIS'}</h4>
+                <h4>${isA ? 'ALERTA REVISÃO' : 'METAS DIÁRIAS'}</h4>
                 <p style="font-size:11px; color:#6c757d">${mode.label}</p>`;
 
         if (isA) {
             cardHtml += `<div class="day-box"><p style="font-size:13px; color:#FF1744; font-weight:600">PARE TUDO: Revise o caderno de erros e as metas do bloco anterior antes de seguir.</p></div>`;
         } else {
-            content.days.forEach((day, idx) => {
-                cardHtml += `<div class="day-box"><span class="day-title">${day} - ${content.subjects[idx]}</span>`;
+            config.days.forEach((day, idx) => {
+                const lawSubject = lawList[idx];
+                cardHtml += `<div class="day-box"><span class="day-title">${day}</span>`;
+                
                 mode.tasks.forEach((task, tIdx) => {
                     const id = `${currentMode}-w${i}-d${idx}-t${tIdx}`;
-                    const color = task.includes('Lei') ? 'green' : (task.includes('Metas') || task.includes('Doutrina') ? 'pink' : 'gray');
-                    cardHtml += `
-                        <div class="item">
-                            <input type="checkbox" id="${id}" onchange="save()">
-                            <span class="box ${color}"></span>
-                            <label for="${id}">${task}</label>
-                        </div>`;
+                    const isLaw = task.includes('Reforço Lei');
+                    const color = isLaw ? 'green' : (task.includes('Metas') || task.includes('Doutrina') ? 'pink' : 'gray');
+                    
+                    if (isLaw) {
+                        cardHtml += `
+                            <div class="lei-section">
+                                <span class="lei-tag">REFORÇO DA LEI</span>
+                                <div class="item">
+                                    <input type="checkbox" id="${id}" onchange="save()">
+                                    <label for="${id}"><b>${lawSubject}:</b> ${task.split(' ')[2]}</label>
+                                </div>
+                            </div>`;
+                    } else {
+                        cardHtml += `
+                            <div class="item">
+                                <input type="checkbox" id="${id}" onchange="save()">
+                                <span class="box ${color}"></span>
+                                <label for="${id}">${task}</label>
+                            </div>`;
+                    }
                 });
                 cardHtml += `</div>`;
             });
@@ -66,15 +88,10 @@ function render() {
     load();
 }
 
-function save() {
-    document.querySelectorAll('input[type="checkbox"]').forEach(c => localStorage.setItem(c.id, c.checked));
-    updateProgress();
-}
+function save() { document.querySelectorAll('input[type="checkbox"]').forEach(c => localStorage.setItem(c.id, c.checked)); updateProgress(); }
 
 function load() {
-    document.querySelectorAll('input[type="checkbox"]').forEach(c => {
-        c.checked = localStorage.getItem(c.id) === 'true';
-    });
+    document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = localStorage.getItem(c.id) === 'true');
     document.getElementById('global-notes').value = localStorage.getItem('duo-notes') || '';
     updateProgress();
 }
@@ -84,7 +101,7 @@ function saveNotes() { localStorage.setItem('duo-notes', document.getElementById
 function updateProgress() {
     const checks = document.querySelectorAll('input[type="checkbox"]');
     const done = Array.from(checks).filter(c => c.checked).length;
-    const perc = Math.round((done / checks.length) * 100) || 0;
+    const perc = Math.round((done / (checks.length || 1)) * 100) || 0;
     document.getElementById('main-bar').style.width = perc + '%';
     document.getElementById('perc-label').innerText = `${perc}% CONCLUÍDO`;
 }
@@ -95,7 +112,7 @@ function exportProgress() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `meu-progresso-duo-${new Date().toLocaleDateString()}.json`;
+    a.download = `backup-estudos-duo.json`;
     a.click();
 }
 
@@ -110,6 +127,6 @@ function importProgress(input) {
     reader.readAsText(file);
 }
 
-function clearAll() { if(confirm("Deseja apagar tudo?")) { localStorage.clear(); location.reload(); } }
+function clearAll() { if(confirm("Deseja apagar o progresso atual?")) { localStorage.clear(); location.reload(); } }
 
 document.addEventListener('DOMContentLoaded', render);
