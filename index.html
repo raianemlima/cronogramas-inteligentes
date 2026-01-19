@@ -6,8 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <title>Cursos DUO | Cronograma Inteligente</title>
 </head>
-<body>
-    <header class="clean-header">
+<body id="app-body" style="display:none;"> <header class="clean-header">
         <div class="top-bar">
             <div class="logo-area">
                 <h1 class="brand-logo">CURSOS <span class="green-brand">DUO</span></h1>
@@ -45,11 +44,14 @@
                 <input type="file" id="import-file" style="display:none" onchange="importProgress(this)">
                 <button class="btn-action" onclick="document.getElementById('import-file').click()">📥 IMPORTAR BACKUP</button>
             </div>
+            
             <h4>LOG DE ANOTAÇÕES</h4>
             <textarea id="global-notes" placeholder="Parei na Meta X de ECA..." oninput="saveNotes()"></textarea>
+            
             <div class="legend">
                 <div class="leg"><span class="box green"></span> Reforço Lei (Checklist)</div>
                 <div class="leg"><span class="box pink"></span> Lista de Metas</div>
+                <div class="leg"><span class="box blue"></span> Juris/Aprofundamento</div>
                 <div class="leg"><span class="box gray"></span> Questões</div>
             </div>
             <button class="reset-link" onclick="clearAll()">Resetar progresso local</button>
