@@ -1,74 +1,64 @@
 let currentPart = 1;
-const totalSemanas = 54; // [cite: 1731]
 const pendenciaWeeks = [5, 10, 15, 23, 28, 33, 41, 46, 51]; // [cite: 1753]
 
-function switchPart(p) {
+function changePart(p) {
     currentPart = p;
-    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === p));
-    render();
+    document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i+1 === p));
+    init();
 }
 
-function render() {
-    const grid = document.getElementById('schedule-grid');
+function init() {
+    const grid = document.getElementById('grid');
     grid.innerHTML = '';
     
-    // Calcula intervalo da parte [cite: 1729-1731]
-    const start = (currentPart - 1) * 18 + 1;
+    const start = (currentPart - 1) * 18 + 1; // [cite: 1729-1731]
     const end = currentPart * 18;
 
     for (let i = start; i <= end; i++) {
-        const isPendencia = pendenciaWeeks.includes(i);
-        const card = document.createElement('div');
-        card.className = `card ${isPendencia ? 'pendencia-card' : ''}`;
-        
-        card.innerHTML = `
-            <div class="card-h">
-                <span class="week-badge">S${i}</span>
-                <span style="font-size:10px; color:var(--v-glow)">${isPendencia ? 'SYSTEM RECOVERY' : 'ACTIVE SESSION'}</span>
-            </div>
-            <h4 style="margin:0 0 15px 0">${isPendencia ? 'SEMANA DE PENDÊNCIAS' : 'CRONOGRAMA DE METAS'}</h4>
-            
-            ${item(i, 'Lei', 'Reforço de Lei [cite: 1781]', 'verde')}
-            ${item(i, 'Meta', 'Lista de Metas [cite: 1868]', 'verde')}
-            ${item(i, 'Quest', 'Questões Diárias [cite: 1871]', 'azul')}
-            ${isPendencia ? '<div style="font-size:11px; color:var(--r-glow); margin-top:10px">► Alerta Revisão: Caderno de Erros [cite: 1757]</div>' : ''}
-        `;
-        grid.appendChild(card);
+        const isP = pendenciaWeeks.includes(i);
+        grid.innerHTML += `
+            <div class="card ${isP ? 'pendencia' : ''}">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <span style="font-weight:bold; color:var(--accent)">WEEK ${i}</span>
+                    <span style="font-size:10px">${isP ? 'RECOVERY MODE' : 'STABLE'}</span>
+                </div>
+                <h4 style="margin:10px 0">${isP ? 'Semana de Pendências' : 'Metas da Semana'}</h4>
+                <div class="meta-row"><input type="checkbox" id="w${i}l" onchange="sync()"><label>Letra da Lei</label></div>
+                <div class="meta-row"><input type="checkbox" id="w${i}m" onchange="sync()"><label>Lista de Metas</label></div>
+                <div class="meta-row"><input type="checkbox" id="w${i}q" onchange="sync()"><label>Questões</label></div>
+            </div>`;
     }
     load();
 }
 
-function item(sem, tipo, texto, bloco) {
-    const id = `w${sem}${tipo}`;
-    return `
-        <div class="meta-item border-${bloco}">
-            <input type="checkbox" id="${id}" onchange="save('${id}', this.checked)">
-            <label for="${id}" style="font-size:13px; cursor:pointer">${texto}</label>
-        </div>
-    `;
-}
-
-function save(id, state) {
-    localStorage.setItem(id, state);
+function sync() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(c => localStorage.setItem(c.id, c.checked));
     updateProgress();
 }
 
-function updateProgress() {
-    const all = document.querySelectorAll('input[type="checkbox"]');
-    const checked = Array.from(all).filter(c => localStorage.getItem(c.id) === 'true').length;
-    // O progresso é baseado no total de 54 semanas para ser real
-    const totalChecks = totalSemanas * 3; 
-    const porc = Math.round((checked / totalChecks) * 100) || 0;
-    
-    document.getElementById('main-bar').style.width = porc + '%';
-    document.getElementById('perc-txt').innerText = `${porc}% SYNCED`;
-}
+function saveNotes() { localStorage.setItem('duo-notes', document.getElementById('user-notes').value); }
 
 function load() {
     document.querySelectorAll('input[type="checkbox"]').forEach(c => {
         c.checked = localStorage.getItem(c.id) === 'true';
     });
+    document.getElementById('user-notes').value = localStorage.getItem('duo-notes') || '';
     updateProgress();
 }
 
-document.addEventListener('DOMContentLoaded', () => switchPart(1));
+function updateProgress() {
+    const checks = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    const done = checks.filter(c => c.checked).length;
+    const perc = Math.round((done / checks.length) * 100) || 0;
+    document.getElementById('bar').style.width = perc + '%';
+    document.getElementById('status-txt').innerText = perc + '% SYNCED';
+}
+
+function clearAll() {
+    if(confirm("Deseja resetar todo o progresso e anotações?")) {
+        localStorage.clear();
+        location.reload();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => init());

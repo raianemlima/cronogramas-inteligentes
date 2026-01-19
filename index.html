@@ -4,25 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>DUO TECH - Painel Raiane</title>
+    <title>Duo Control Center</title>
 </head>
 <body>
-    <header class="glass-header">
-        <div class="header-content">
-            <span class="logo-text">CURSOS DUO <span class="edition">EXTENSIVO INTELIGENTE</span></span>
-            <div class="main-progress">
-                <div class="progress-track"><div id="main-bar" class="progress-fill"></div></div>
-                <span id="perc-txt">0% SYNCED</span>
-            </div>
+    <header class="dashboard-nav">
+        <h2 style="margin:0; letter-spacing: 2px; color: var(--primary)">Duo OS <span style="font-weight:300; color:#fff">v.2.0</span></h2>
+        <div class="progress-orbit"><div id="bar" class="progress-glow"></div></div>
+        <div id="status-txt" style="font-size: 12px; font-weight: bold">0% SYNCED</div>
+        <div class="tab-group">
+            <button class="tab-btn active" onclick="changePart(1)">PARTE 01</button>
+            <button class="tab-btn" onclick="changePart(2)">PARTE 02</button>
+            <button class="tab-btn" onclick="changePart(3)">PARTE 03</button>
         </div>
-        <nav class="parts-nav">
-            <button class="tab-btn active" onclick="switchPart(1)">PARTE 01</button>
-            <button class="tab-btn" onclick="switchPart(2)">PARTE 02</button>
-            <button class="tab-btn" onclick="switchPart(3)">PARTE 03</button>
-        </nav>
     </header>
 
-    <main id="schedule-grid" class="grid-container"></main>
+    <div class="main-layout">
+        <section id="grid" class="grid-container"></section>
+        
+        <aside class="notes-panel">
+            <h4 style="margin-top:0; color: var(--accent)">LOG DE PROGRESSO</h4>
+            <p style="font-size: 11px; opacity: 0.6">Anote aqui temas pendentes ou onde parou na leitura da lei.</p>
+            <textarea id="user-notes" placeholder="Ex: Semana 2 - Parei no art. 40 do ECA..." oninput="saveNotes()"></textarea>
+            <button onclick="clearAll()" style="margin-top:15px; background:none; border:none; color:var(--secondary); cursor:pointer; font-size:10px">REINICIAR SISTEMA</button>
+        </aside>
+    </div>
 
     <script src="script.js"></script>
 </body>
