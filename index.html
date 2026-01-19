@@ -4,28 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Duo Control Center</title>
+    <title>Dashboard - Cursos DUO</title>
 </head>
 <body>
-    <header class="dashboard-nav">
-        <h2 style="margin:0; letter-spacing: 2px; color: var(--primary)">Duo OS <span style="font-weight:300; color:#fff">v.2.0</span></h2>
-        <div class="progress-orbit"><div id="bar" class="progress-glow"></div></div>
-        <div id="status-txt" style="font-size: 12px; font-weight: bold">0% SYNCED</div>
-        <div class="tab-group">
-            <button class="tab-btn active" onclick="changePart(1)">PARTE 01</button>
-            <button class="tab-btn" onclick="changePart(2)">PARTE 02</button>
-            <button class="tab-btn" onclick="changePart(3)">PARTE 03</button>
+    <header class="dashboard-header">
+        <div class="header-top">
+            <h1 class="logo">CURSOS <span class="highlight">DUO</span></h1>
+            <div class="selector-container">
+                <label for="schedule-select">CARGA HORÁRIA:</label>
+                <select id="schedule-select" onchange="changeSchedule()">
+                    <option value="8h1">8 HORAS - OPÇÃO 01</option>
+                    <option value="8h2">8 HORAS - OPÇÃO 02</option>
+                    <option value="6h1">6 HORAS - OPÇÃO 01</option>
+                    <option value="6h2">6 HORAS - OPÇÃO 02</option>
+                    <option value="4h">4 HORAS - PADRÃO</option>
+                    <option value="3h">3 HORAS - PADRÃO</option>
+                </select>
+            </div>
         </div>
+        <div class="progress-container">
+            <div class="progress-bar"><div id="main-progress" class="fill"></div></div>
+            <span id="progress-text">0% CONCLUÍDO</span>
+        </div>
+        <nav class="parts-nav">
+            <button class="part-btn active" onclick="setPart(1)">PARTE 01</button>
+            <button class="part-btn" onclick="setPart(2)">PARTE 02</button>
+            <button class="part-btn" onclick="setPart(3)">PARTE 03</button>
+        </nav>
     </header>
 
-    <div class="main-layout">
-        <section id="grid" class="grid-container"></section>
+    <div class="main-content">
+        <section id="cronograma-grid" class="grid"></section>
         
-        <aside class="notes-panel">
-            <h4 style="margin-top:0; color: var(--accent)">LOG DE PROGRESSO</h4>
-            <p style="font-size: 11px; opacity: 0.6">Anote aqui temas pendentes ou onde parou na leitura da lei.</p>
-            <textarea id="user-notes" placeholder="Ex: Semana 2 - Parei no art. 40 do ECA..." oninput="saveNotes()"></textarea>
-            <button onclick="clearAll()" style="margin-top:15px; background:none; border:none; color:var(--secondary); cursor:pointer; font-size:10px">REINICIAR SISTEMA</button>
+        <aside class="sidebar-notes">
+            <h3>LOG DE ESTUDO</h3>
+            <p>Anotações sobre metas e onde parou:</p>
+            <textarea id="notes-area" placeholder="Escreva aqui..." oninput="saveNotes()"></textarea>
+            <button class="reset-btn" onclick="resetAll()">REINICIAR TUDO</button>
         </aside>
     </div>
 
