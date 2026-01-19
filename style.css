@@ -1,14 +1,37 @@
 :root {
-    --verde-duo: #2ecc71; /* Bloco Verde: Direito Civil, Penal, Const... */ [cite: 189]
-    --rosa-duo: #e91e63;  /* Bloco Rosa: ECA, Humanos, Difusos... */ [cite: 190]
-    --azul-duo: #3498db;  /* Bloco Azul: Periférica Prioritária... */ [cite: 191]
-    --cinza-duo: #95a5a6; /* Bloco Cinza: Empresarial e Tributário */ [cite: 192]
-    --bg: #f8f9fa;
+    --verde: #2ecc71; /* Bloco Verde [cite: 189] */
+    --rosa: #e91e63;  /* Bloco Rosa [cite: 190] */
+    --azul: #3498db;  /* Bloco Azul [cite: 191] */
+    --cinza: #95a5a6; /* Bloco Cinza [cite: 192] */
+    --bg: #f0f2f5;
 }
 
-body { font-family: sans-serif; background: var(--bg); padding: 20px; }
-.header { text-align: center; border-bottom: 3px solid var(--verde-duo); margin-bottom: 20px; }
-.semana-card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 20px; shadow: 2px 2px 10px rgba(0,0,0,0.1); }
-.meta-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #eee; }
-.meta-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
-.pendencia { border: 2px solid var(--rosa-duo); background: #fff5f7; } /* Destaque para Semana de Pendências */ [cite: 43]
+body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+
+.header { 
+    background: white; padding: 30px; border-radius: 15px; text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 8px solid var(--verde);
+}
+
+.progress-container { margin: 20px 0; background: #ddd; border-radius: 10px; height: 10px; }
+.progress-bar { background: var(--verde); width: 0%; height: 100%; border-radius: 10px; transition: 0.5s; }
+
+.semana-card { 
+    background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.parte-tag { 
+    display: inline-block; padding: 4px 12px; border-radius: 20px; 
+    font-size: 12px; font-weight: bold; color: white; margin-bottom: 10px;
+}
+
+.item-meta { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.item-meta:last-child { border: none; }
+input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--verde); cursor: pointer; }
+
+.bloco-verde { color: var(--verde); font-weight: bold; }
+.bloco-rosa { color: var(--rosa); font-weight: bold; }
+.bloco-azul { color: var(--azul); font-weight: bold; }
+
+.pendencia { border: 2px dashed var(--rosa); background: #fff5f8; }

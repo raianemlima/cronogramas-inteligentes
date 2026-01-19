@@ -1,68 +1,57 @@
 const totalSemanas = 54;
-const semanasPendencia = [5, 10, 15, 23, 28, 33, 41, 46, 51];
+const container = document.getElementById('cronograma-container');
 
-const materiasBase = {
-    segunda: "Penal (Reforço + Metas + Questões)",
-    terca: "Constitucional & Humanos",
-    quarta: "Civil (Reforço + Metas + Questões)",
-    quinta: "Proc. Civil & ECA",
-    sexta: "Proc. Penal & Atualização Jurisprudencial",
-    sabado: "Revisão Semanal & Reforço Humanos"
-};
-
-function gerarCronograma() {
-    const container = document.getElementById('cronograma-container');
-    if (!container) return;
-
+function gerar() {
     for (let i = 1; i <= totalSemanas; i++) {
-        const isPendencia = semanasPendencia.includes(i);
+        const parte = i <= 18 ? 1 : (i <= 36 ? 2 : 3); // Divisão em 3 partes 
+        const isPendencia = [5, 10, 15, 23, 28, 33, 41, 46, 51].includes(i); // Semanas de respiro [cite: 43]
         
-        let html = `
-            <div class="semana-card ${isPendencia ? 'pendencia' : ''}">
-                <h3 style="color: #2ecc71">Semana ${i} ${isPendencia ? ' - ⚠️ SEMANA DE PENDÊNCIAS' : ''}</h3>
-                <p><i>${isPendencia ? 'Foco em revisão e caderno de erros.' : 'Siga a rotina multifocal.'}</i></p>
-                
-                <div class="meta-item">
-                    <input type="checkbox" id="s${i}d1" onchange="salvar('s${i}d1', this.checked)">
-                    <label>Segunda: ${materiasBase.segunda}</label>
-                </div>
-                <div class="meta-item">
-                    <input type="checkbox" id="s${i}d2" onchange="salvar('s${i}d2', this.checked)">
-                    <label>Terça: ${materiasBase.terca}</label>
-                </div>
-                <div class="meta-item">
-                    <input type="checkbox" id="s${i}d3" onchange="salvar('s${i}d3', this.checked)">
-                    <label>Quarta: ${materiasBase.quarta}</label>
-                </div>
-                <div class="meta-item">
-                    <input type="checkbox" id="s${i}d4" onchange="salvar('s${i}d4', this.checked)">
-                    <label>Quinta: ${materiasBase.quinta}</label>
-                </div>
-                <div class="meta-item">
-                    <input type="checkbox" id="s${i}d5" onchange="salvar('s${i}d5', this.checked)">
-                    <label>Sexta: ${materiasBase.sexta}</label>
-                </div>
-                <div class="meta-item">
-                    <input type="checkbox" id="s${i}d6" onchange="salvar('s${i}d6', this.checked)">
-                    <label>Sábado: ${materiasBase.sabado}</label>
-                </div>
-            </div>`;
-        container.innerHTML += html;
+        let card = document.createElement('div');
+        card.className = `semana-card ${isPendencia ? 'pendencia' : ''}`;
+        
+        card.innerHTML = `
+            <span class="parte-tag" style="background: ${parte === 1 ? '#2ecc71' : (parte === 2 ? '#3498db' : '#e91e63')}">
+                PARTE ${parte}
+            </span>
+            <h3>Semana ${i} ${isPendencia ? '⚠️ PENDÊNCIAS' : ''}</h3>
+            ${isPendencia ? '<p><i>Semana para colocar o estudo em dia e revisar o caderno de erros.</i></p>' : ''}
+            
+            <div class="item-meta">
+                <input type="checkbox" id="s${i}L" onchange="atualizar()">
+                <label><span class="bloco-verde">Reforço de Lei:</span> Penal, Const, Civil e Proc. Civil</label>
+            </div>
+            <div class="item-meta">
+                <input type="checkbox" id="s${i}M" onchange="atualizar()">
+                <label><span class="bloco-rosa">Metas:</span> Doutrina e Jurisprudência</label>
+            </div>
+            <div class="item-meta">
+                <input type="checkbox" id="s${i}Q" onchange="atualizar()">
+                <label><span class="bloco-azul">Questões:</span> Treino diário conforme a meta</label>
+            </div>
+        `;
+        container.appendChild(card);
     }
-    carregarProgresso();
+    carregar();
 }
 
-function salvar(id, status) {
-    localStorage.setItem(id, status);
-}
-
-function carregarProgresso() {
-    const checks = document.querySelectorAll('input[type="checkbox"]');
-    checks.forEach(c => {
-        const status = localStorage.getItem(c.id);
-        if (status === 'true') c.checked = true;
+function atualizar() {
+    const todos = document.querySelectorAll('input[type="checkbox"]');
+    let marcados = 0;
+    todos.forEach(c => {
+        localStorage.setItem(c.id, c.checked);
+        if(c.checked) marcados++;
     });
+    
+    const porc = Math.round((marcados / todos.length) * 100);
+    document.getElementById('progress').style.width = porc + '%';
+    document.getElementById('status-txt').innerText = porc + '% concluído';
 }
 
-// Inicia a geração
-document.addEventListener('DOMContentLoaded', gerarCronograma);
+function carregar() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(c => {
+        c.checked = localStorage.getItem(c.id) === 'true';
+    });
+    atualizar();
+}
+
+gerar();
